@@ -1,4 +1,4 @@
-# CQRS Journey PDF
+# CQRS Journey => PDF
 
 Ruby script for generating a PDF of the Microsoft patterns & practices [CQRS Journey documentation](https://github.com/mspnp/cqrs-journey-doc/).
 
