@@ -4,6 +4,16 @@ Ruby script for generating a PDF of the Microsoft patterns & practices [CQRS Jou
 
 This is entirely *unofficial* and is in no way endorsed by Microsoft or the patterns & practices team. However I found it useful to create a PDF from the work-in-progress documentation to allow reading on my iPad.
 
+## Downloads
+
+Download a pre-generated copy of each of the CQRS Journey documents.
+
+* [CQRS Journey README](https://github.com/downloads/slashdotdash/cqrs-journey-pdf/mspnp-cqrs-journey-readme.pdf) (PDF)
+* [CQRS Journey](https://github.com/downloads/slashdotdash/cqrs-journey-pdf/mspnp-cqrs-journey.pdf) (PDF)
+* [CQRS Reference](https://github.com/downloads/slashdotdash/cqrs-journey-pdf/mspnp-cqrs-reference.pdf) (PDF)
+
+I will endeavour to keep this up-to-date as the CQRS journey progresses. Do note that this is *draft documentation and incomplete*.
+
 ## Dependencies
 
 Uses the [gimli](https://github.com/walle/gimli/) Ruby gem for converting markup, such as Markdown formatted text, to PDF. Gimli uses [PDFKit](https://github.com/pdfkit/PDFKit) for PDF generation, which itself is a thin wrapper around [wkhtmltopdf](http://code.google.com/p/wkhtmltopdf/).
