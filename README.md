@@ -1,6 +1,6 @@
 # CQRS Journey => PDF
 
-Ruby script for generating a PDF of the Microsoft patterns & practices [CQRS Journey documentation](https://github.com/mspnp/cqrs-journey-doc/).
+Ruby script for generating PDFs from the Microsoft patterns & practices [CQRS Journey documentation](https://github.com/mspnp/cqrs-journey-doc/).
 
 This is entirely *unofficial* and is in no way endorsed by Microsoft or the patterns & practices team. However I found it useful to create a PDF from the work-in-progress documentation to allow reading on my iPad.
 
