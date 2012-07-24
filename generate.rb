@@ -153,6 +153,6 @@ input_dir, output_dir = ARGV
 
 generator = PdfGenerator.new(input_dir, output_dir)
 
-generator.to_pdf('Journey', 'mspnp-cqrs-journey', 'CQRS Journey')
+generator.to_pdf('[Journey|Tales]', 'mspnp-cqrs-journey', 'CQRS Journey')
 generator.to_pdf('Reference','mspnp-cqrs-reference', 'CQRS Journey Reference')
 generator.to_pdf('README','mspnp-cqrs-journey-readme', 'CQRS Journey README')
