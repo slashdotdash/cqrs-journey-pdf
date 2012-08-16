@@ -53,33 +53,42 @@ class PdfGenerator
     @input_dir, @output_dir = input_dir, output_dir
   end
   
-  def to_pdf(input_pattern, output_filename, title)
-    begin
-      Dir.mkdir(tmp_dir) unless Dir.exists?(tmp_dir)   
+  def to_pdf(input_pattern, output_filename, title, &blk)
+    begin      
+      FileUtils.rm_rf tmp_dir if Dir.exists?(tmp_dir)
+      Dir.mkdir(tmp_dir)
 
       Dir.chdir(@input_dir) do
-        FileUtils.cp_r Dir.glob("#{input_pattern}*.markdown"), tmp_dir
+        # select files matching input pattern regex
+        files = Dir.glob('*.markdown').select {|file| File.basename(file, '.*') =~ input_pattern }
+        FileUtils.cp_r files, tmp_dir
         
-        # always include the copyright file and images dir
-        FileUtils.cp_r 'Copyright.markdown', tmp_dir
+        # always include the copyright file (as the first page) and images dir
+        FileUtils.cp_r 'Copyright.markdown', File.join(tmp_dir, '00_Copyright.markdown')
         FileUtils.cp_r 'images', tmp_dir
       end
 
       FileUtils.cp_r File.join(@output_dir, 'cover.htm'), tmp_dir
+      FileUtils.cp_r File.join(@output_dir, 'cover.png'), tmp_dir
       FileUtils.cp_r File.join(@output_dir, 'mspnp_logo.png'), tmp_dir        
 
       Dir.chdir(tmp_dir) do
-        cover_content = File.read('cover.htm')
-        
-        File.open('cover.htm', 'w') do |cover|
-          now = Time.now
+        Dir.glob('*.markdown') do |filename|
+          content = File.read filename
           
-          cover_content.gsub!(/{pub-date}/, now.strftime("%A #{now.day.ordinalize} of %B, %Y"))
-          cover_content.gsub!(/{title}/, title)
+          ic = Iconv.new('UTF-8//IGNORE', 'UTF-8')
+          content = ic.iconv(content + ' ')[0..-2]
           
-          cover.write cover_content
+          File.open(filename, 'w') do |writer|
+            # allow modification of the content
+            if block_given?
+              yield content
+            end
+            
+            writer.write content
+          end
         end
-              
+        
         # enable C# syntax highlighting
         syntax_highlighting(tmp_dir)
 
@@ -122,12 +131,9 @@ pre, code, tt, .highlight pre, pre { font-family: 'Monaco'; font-size: 14px; }
   end
   
   def syntax_highlighting(dir)
-    ic = Iconv.new('UTF-8//IGNORE', 'UTF-8')
-    
     Dir.chdir(tmp_dir) do
       Dir['*.markdown'].each do |file|
         text = File.read(file)
-        text = ic.iconv(text + ' ')[0..-2]
         
         text.gsub!(/```Cs/, '```csharp')
         text.gsub!(/``` /, '```')
@@ -153,6 +159,10 @@ input_dir, output_dir = ARGV
 
 generator = PdfGenerator.new(input_dir, output_dir)
 
-generator.to_pdf('[Journey|Tales]', 'mspnp-cqrs-journey', 'CQRS Journey')
-generator.to_pdf('Reference','mspnp-cqrs-reference', 'CQRS Journey Reference')
-generator.to_pdf('README','mspnp-cqrs-journey-readme', 'CQRS Journey README')
+generator.to_pdf(/00_WhatOthersSaying|01_Foreword|Journey|Reference|Tales/, 'mspnp-cqrs-journey', 'CQRS Journey') do |content|
+  # remove final notice from all content
+  content.gsub!('### This version of this chapter was part of our working repository during the project. The final version of this chapter is now available on MSDN at [http://aka.ms/cqrs](http://aka.ms/cqrs).', '')
+  
+  # strip (Chapter Title) suffix from titles
+  content.gsub!(/(# .*) \(Chapter Title\)/, '\\1')
+end
